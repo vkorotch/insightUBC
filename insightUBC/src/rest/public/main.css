@@ -1,0 +1,165 @@
+#app {
+    margin: 30px;
+}
+
+#container, #render, #dataset {
+    width:80%;
+    margin:auto;
+    margin-top:20px;
+    margin-bottom: 20px;
+    border: 2px solid #31708f;
+    border-radius: 10px;
+    padding:20px;
+}
+
+th {
+    text-align: left;
+}
+
+th, td {
+    padding: 0 1em 0.5ex 0;
+    padding:10px;
+}
+
+th.center, td.center {
+    text-align: center;
+}
+
+th.num, td.num {
+    text-align: right;
+}
+
+.axis path, .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+.table--rooms {
+    width: 400px;
+    margin: 30px auto;
+}
+
+
+.table--rooms,
+.table--rooms tr,
+.table--rooms th,
+.table--rooms td {
+    border: 1px solid #bbb;
+}
+
+.table--rooms td {
+    padding: 3px 10px;
+}
+
+.table--rooms td:first-child {
+    font-size: 13px;
+}
+
+.table--rooms td:after {
+    content: attr(data-course);
+}
+
+.table--rooms td[data-course="free"]:after {
+    content: "";
+}
+
+.table--rooms td[data-course="free"] {
+    background-color: #fafafa;
+}
+
+.table--rooms .badTime td {
+    box-shadow: inset 3px 0 #ff6161;
+}
+
+.table--rooms .badTime td:first-child {
+    background-color: transparent;
+}
+.timetable-list{
+
+}
+.timetable-list li {
+    list-style: none;
+    display: inline-block;
+    margin: 0 3px 3px 0;
+}
+
+
+.dataGrids {
+    overflow: auto;
+}
+
+.dataGrid {
+    position: relative;
+    float: left;
+    width: 50%;
+}
+
+.dataGrid .distance {
+    float: right;
+}
+
+.dataGrid .buildingName {
+    width: 70px;
+}
+
+.dataGrid .meters {
+    width: 50px;
+}
+
+.dataGrid:first-child {
+    border-right: 2px solid #bbb;
+}
+
+.datagrid table {
+    height: 500px;
+    overflow: auto;
+}
+
+.dataGrid h2 {
+    margin: 0;
+    background: #f0f0f0;
+    text-align: center;
+    font-size: 15pt;
+    line-height: 40px;
+    font-weight: 400;
+}
+
+.dataGrid form {
+    position: absolute;
+    width: 100%;
+    padding: 5px 10px;
+    background: #fafafa;
+}
+
+.dataGridWrapper {
+    margin-top: 36px;
+    height: 500px;
+    overflow: auto;
+}
+
+.arrow {
+    display: inline-block;
+    vertical-align: middle;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    opacity: 0.66;
+}
+
+.arrow.asc {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #000;
+}
+
+.arrow.dsc {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #000;
+}

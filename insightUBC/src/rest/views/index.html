@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="./public/bootstrap.min.css">
+    <link rel="stylesheet" href="./public/main.css">
+    <script src="./public/jquery.min.js"></script>
+    <script src="./public/bootstrap.min.js"></script>
+    <script src="./public/d3.min.js"></script>
+
+</head>
+<html>
+<body>
+
+<div id="app">
+    <nav class="navbar navbar-default">
+        <div class = "container=fluid">
+            <a class = "navbar-brand">CPSC310 EXPLORER</a>
+        </div>
+    </nav>
+    <div class = "panel panel-default">
+        <div class = "panel-body">
+
+            <div>
+                <h1>Explore Courses:</h1>
+                <form action = ''>
+                    <label>
+                        ctrl-click to select multiple filters:
+                    </label>
+                    <div> </div>
+                    <select id = "selectCoursesFiltersSimpleEx" multiple = "multiple" size = "9" v-model="cFiltersSimpleEx">
+                        <option value="courses_instructor">Course instructor</option>
+                        <option value="courses_title">Title</option>
+                        <option value="courses_pass">Pass</option>
+                        <option value="courses_fail">Fail</option>
+                        <option value="courses_avg">Average</option>
+                        <option value="courses_year">Year</option>
+                        <option value="courses_attended">Size</option>
+                    </select>
+                    <div></div>
+                    <label>Order by: </label>
+                    <div></div>
+                    <select id = "selectCoursesOrderSimpleEx" multiple = "multiple" size = "9" v-model="coursesOrderSimpleEx">
+                        <option value="courses_pass">Passing students</option>
+                        <option value="courses_fail">Failing students</option>
+                        <option value="courses_avg">Average grade</option>
+                        <option value="courses_instructor">Course instructor</option>
+                        <option value="courses_title">Title</option>
+                        <option value="courses_dept">Dept</option>
+                        <option value="courses_id">Course ID</option>
+                        <option value="courses_attended">Size</option>
+                    </select>
+                    <div>
+                        </div>
+                    <label>Ascending or descending order: </label>
+                    <select v-model="orderDirectionSimpleEx">
+                        <option value="UP">Ascending</option>
+                        <option value="DOWN">Descending</option>
+                    </select>
+                    <div></div>
+                </form>
+                <div id = "coursesOutputSimpleEx">
+                    <ul>
+                        <li>
+                            Department:
+                            <input type="text" v-model="keysSimpleEx.courses_dept">
+                        </li>
+                        <li>
+                            Course ID:
+                            <input type="number" v-model="keysSimpleEx.courses_id">
+                        </li>
+                        <li id="courses_pass_liSimpleEx">
+                            Number of students who passed:
+                            <select v-model="where_courses_passSimpleEx">
+                                <option value="EQ">EQ</option>
+                                <option value="LT">LT</option>
+                                <option value="GT">GT</option>
+                            </select>
+                            <input type="number" v-model="keysSimpleEx.courses_pass">
+                        </li>
+                        <li id="courses_fail_liSimpleEx">
+                            Number of students who failed:
+                            <select v-model="where_courses_failSimpleEx">
+                                <option value="EQ">EQ</option>
+                                <option value="LT">LT</option>
+                                <option value="GT">GT</option>
+                            </select>
+                            <input type="number" v-model="keysSimpleEx.courses_fail">
+                        </li>
+                        <li id="courses_avg_liSimpleEx">
+                            Course average:
+                            <select v-model="where_courses_avgSimpleEx">
+                                <option value="EQ">EQ</option>
+                                <option value="LT">LT</option>
+                                <option value="GT">GT</option>
+                            </select>
+                            <input type="number" v-model="keysSimpleEx.courses_avg">
+                        </li>
+                        <li id="courses_year_liSimpleEx">
+                            Course year:
+                            <select v-model="where_courses_yearSimpleEx">
+                                <option value="EQ">EQ</option>
+                                <option value="LT">LT</option>
+                                <option value="GT">GT</option>
+                            </select>
+                            <input type="number" v-model="keysSimpleEx.courses_year">
+                        </li>
+                        <li id="courses_title_liSimpleEx">
+                            Course title:
+                            <input type="text" v-model="keysSimpleEx.courses_title">
+                        </li>
+                        <li id="courses_instructor_liSimpleEx">
+                            Course instructor:
+                            <input type="text" v-model="keysSimpleEx.courses_instructor">
+                        </li>
+
+                    </ul>
+                </div>
+                <div>
+                    <button @click="sendCoursesQuerySimpleEx" class="btn btn-success" id="searchCoursesButtonSimpleEx">Search Courses</button>
+                </div>
+            </div>
+
+            <div>
+                <h1>Explore Rooms:</h1>
+                <div id = "roomsOutputSimpleEx">
+                    <ul>
+                        <li>
+                            Full name:
+                            <input type="'text" v-model="keysSimpleEx.rooms_name">
+                        </li>
+                        <li>
+                            Short name:
+                            <input type="'text" v-model="keysSimpleEx.rooms_shortname">
+                        </li>
+                        <li>
+                            Show rooms with at least:
+                            <input type="'text" v-model="keysSimpleEx.rooms_seats">
+                            number of seats
+                        </li>
+                        <li>
+                            Show rooms with type
+                            <input type="'text" v-model="keysSimpleEx.rooms_type">
+                            of furniture
+                            <input type="'text" v-model="keysSimpleEx.rooms_furniture">
+                        </li>
+
+                    </ul>
+                </div>
+                <div>
+                    <button @click="sendRoomsQuerySimpleEx" class="btn btn-success" id="searchRoomsButtonSimpleEx">Search Rooms</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dataGrids">
+        <div class="dataGrid">
+            <h2>Courses</h2>
+            <form>
+                <input name="query" v-model="CoursesSimpleEx.searchQuery" placeholder="Search">
+            </form>
+            <div class="dataGridWrapper">
+                <data-grid
+                        :data="CoursesSimpleEx.gridData"
+                        :columns="CoursesSimpleEx.columns"
+                        :filter-key="CoursesSimpleEx.searchQuery">
+                </data-grid>
+            </div>
+        </div>
+
+        <div class="dataGrid">
+            <h2>Rooms</h2>
+            <form>
+                <input name="query" v-model="RoomsSimpleEx.searchQuery" placeholder="Search">
+                <div class="distance">
+                    Distance From <input name="origin" class="buildingName" v-model="RoomsSimpleEx.distanceOrigin" placeholder="Building">
+                    <select v-model="RoomsSimpleEx.distanceComparator">
+                        <option value="eq">=</option>
+                        <option value="lt">&lt;</option>
+                        <option value="gt">&gt;</option>
+                    </select>
+                    <input name="meters" class="meters" v-model="RoomsSimpleEx.distanceMeters" placeholder="meters">
+                </div>
+            </form>
+            <div class="dataGridWrapper">
+                <data-grid
+                        :data="RoomsSimpleEx.gridData"
+                        :columns="RoomsSimpleEx.columns"
+                        :filter-key="RoomsSimpleEx.searchQuery"
+                        :distance-origin="RoomsSimpleEx.distanceOrigin"
+                        :distance-comparator="RoomsSimpleEx.distanceComparator"
+                        :distance-meters="RoomsSimpleEx.distanceMeters"
+                        :buildings-info="buildingsInfo">
+
+                </data-grid>
+            </div>
+        </div>
+    </div>
+    <div class = "panel panel-default">
+        <div class = "panel-body">
+
+            <div>
+                <h1>Explore Courses for Scheduling:</h1>
+                <div id = "coursesOutput">
+                    <ul>
+                        <li>
+                            Department:
+                            <input type="text" v-model="keys.courses_dept">
+                        </li>
+                        <li>
+                            Course ID:
+                            <input type="number" v-model="keys.courses_id">
+                        </li>
+                        
+
+                    </ul>
+                </div>
+                <div>
+                    <button @click="sendCoursesQuery" class="btn btn-success" id="searchCoursesButton">Search Courses</button>
+                </div>
+            </div>
+
+            <div>
+                <h1>Explore Rooms for Scheduling:</h1>
+                <div id = "roomsOutput">
+                    <ul>
+                        <li>
+                            Short name:
+                            <input type="'text" v-model="keys.rooms_shortname">
+                        </li>
+
+                    </ul>
+                </div>
+                <div>
+                    <button @click="sendRoomsQuery" class="btn btn-success" id="searchRoomsButton">Search Rooms</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dataGrids">
+        <div class="dataGrid">
+            <h2>Courses</h2>
+            <form>
+                <input name="query" v-model="Courses.searchQuery" placeholder="Search">
+            </form>
+            <div class="dataGridWrapper">
+                <data-grid
+                    :data="Courses.gridData"
+                    :columns="Courses.columns"
+                    :filter-key="Courses.searchQuery">
+                </data-grid>
+            </div>
+        </div>
+
+        <div class="dataGrid">
+            <h2>Rooms</h2>
+            <form>
+                <input name="query" v-model="Rooms.searchQuery" placeholder="Search">
+                <div class="distance">
+                    Distance From <input name="origin" class="buildingName" v-model="Rooms.distanceOrigin" placeholder="Building">
+                    <select v-model="Rooms.distanceComparator">
+                        <option value="eq">=</option>
+                        <option value="lt">&lt;</option>
+                        <option value="gt">&gt;</option>
+                    </select>
+                    <input name="meters" class="meters" v-model="Rooms.distanceMeters" placeholder="meters">
+                </div>
+            </form>
+            <div class="dataGridWrapper">
+                <data-grid
+                        :data="Rooms.gridData"
+                        :columns="Rooms.columns"
+                        :filter-key="Rooms.searchQuery"
+                        :distance-origin="Rooms.distanceOrigin"
+                        :distance-comparator="Rooms.distanceComparator"
+                        :distance-meters="Rooms.distanceMeters"
+                        :buildings-info="buildingsInfo">
+
+                </data-grid>
+            </div>
+        </div>
+    </div>
+    <button @click="scheduleSomething" class="btn btn-success">Schedule</button>
+
+    <timetable
+        :data="Scheduler.schedule" :rooms="Scheduler.roomList" :buildings="Scheduler.buildings">
+
+    </timetable>
+
+    <div> 
+    <p> Couldn't schedule the following sections: </p>
+     <li v-for="course in Scheduler.unschedule">
+     {{course.courses_dept}} {{course.courses_id}}, Section {{course.courses_section}} with {{course.courses_size}} students.
+     </li>
+    </div>
+    <div class ="panel-heading">
+        <h3>Query</h3>
+    </div>
+    <div class = "panel-body">
+        <p>Query: </p>
+        <div class="form-group">
+            <input class="form-control" rows="10" v-model="query" placeholder="input query here (testing)" >
+        </div>
+        <button @click="sendCoursesQuery" class="btn btn-success" >CourseQ</button>
+        <button @click="sendRoomsQuery" class="btn btn-success" >RoomQ</button>
+        <p></p>
+    </div>
+
+    <div class=" panel-default">
+        <p>Schedule: </p>
+        <div class="form-group">
+            <input class="form-control" rows="10" v-model="ScheduleQuery" placeholder="(testing)" >
+        </div>
+        <p></p>
+    </div>
+
+</div>
+
+<script type="text/x-template" id="grid-template">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th> </th>
+            <th v-for="key in columns"
+            @click="sortBy(key)"
+            :class="{active: sortKey == key}">
+                {{ key }}
+                <span class="arrow" :class= "sortOrders[key]>0? 'asc' : 'dsc'"></span>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="entry in filteredData">
+            <td> <input type="checkbox" @change=selectRow v-bind:data-entry=JSON.stringify(entry)></td>
+            <td v-for="key in columns">
+                <h5>{{entry[key]}}</h5>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<script type="text/x-template" id="timetable">
+    <div>
+        <p>Quality: {{filteredData.quality}}</p>
+
+    <ul>
+        <li v-for="(value,bldg) in buildings">
+            <button @click="toggleList(bldg)">{{bldg}}</button>
+            <ul class="timetable-list">
+                <li
+                        v-for="(room, index) in value"
+
+                ><button @click=changeRoom(room)>{{room}}</button>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <table class="table--rooms">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>MWF</th>
+                <th>TTH</th>
+            </tr>
+        </thead>
+        <tbody v-if="filteredData.MWFPrimeTime">
+        <tr>
+            <td>8:00
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['8-9']"></td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThPrimeTime['8-9:30']"></td>
+        </tr>
+        <tr>
+            <td>8:30</td>
+        </tr>
+        <tr>
+            <td>9:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['9-10']"></td>
+        </tr>
+        <tr>
+            <td>9:30</td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThPrimeTime['9:30-11']"></td>
+        </tr>
+        <tr>
+            <td>10:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['10-11']"></td>
+        </tr>
+        <tr>
+            <td>10:30</td>
+        </tr>
+        <tr>
+            <td>11:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['11-12']"></td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThPrimeTime['11-12:30']"></td>
+        </tr>
+        <tr>
+            <td>11:30</td>
+        </tr>
+        <tr>
+            <td>12:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['12-13']"></td>
+        </tr>
+        <tr>
+            <td>12:30</td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThPrimeTime['12:30-14']"></td>
+        </tr>
+        <tr>
+            <td>13:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['13-14']"></td>
+        </tr>
+        <tr>
+            <td>13:30</td>
+        </tr>
+        <tr>
+            <td>14:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['14-15']"></td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThPrimeTime['14-15:30']"></td>
+        </tr>
+        <tr>
+            <td>14:30</td>
+        </tr>
+        <tr>
+            <td>15:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['15-16']"></td>
+        </tr>
+        <tr>
+            <td>15:30</td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThPrimeTime['15:30-17']"></td>
+        </tr>
+        <tr>
+            <td>16:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFPrimeTime['16-17']"></td>
+        </tr>
+        <tr>
+            <td>16:30</td>
+        </tr>
+        <tr class="badTime">
+            <td>17:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFBadTime['17-18']"></td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThBadTime['17-18:30']"></td>
+        </tr>
+        <tr class="badTime">
+            <td>17:30</td>
+        </tr>
+        <tr class="badTime">
+            <td>18:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFBadTime['18-19']"></td>
+        </tr>
+        <tr class="badTime">
+            <td>18:30</td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThBadTime['18:30-20']"></td>
+        </tr>
+        <tr class="badTime">
+            <td>19:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFBadTime['19-20']"></td>
+        </tr>
+        <tr class="badTime">
+            <td>19:30</td>
+        </tr>
+        <tr class="badTime">
+            <td>20:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFBadTime['20-21']"></td>
+            <td rowspan="3" v-bind:data-course="filteredData.TThBadTime['20-21:30']"></td>
+        </tr>
+        <tr class="badTime">
+            <td>20:30</td>
+        </tr>
+        <tr class="badTime">
+            <td>21:00</td>
+            <td rowspan="2" v-bind:data-course="filteredData.MWFBadTime['21-22']"></td>
+        </tr>
+        <tr class="badTime">
+            <td>21:30</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+</script>
+
+<script src= "https://unpkg.com/vue@2.0.7/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-resource@1.0.3/dist/vue-resource.min.js"></script>
+<script src="https://cdn.jsdelivr.net/vue.table/1.5.7/vue-table.js"></script>
+<script src="./public/main.js"></script>
+
+</body>
+</html>
